@@ -11,7 +11,7 @@ from django.conf import settings
 from twat import settings as twat_settings
 
 
-def twitter_settings(request):
+def twitter(request):
     """Return the most recent tweets for a user."""
     # Check the cache for tweets. If they exist, return them.
     tweets = cache.get('tweets')

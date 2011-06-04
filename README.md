@@ -16,14 +16,14 @@ Installation
 ------------
 
 1. Put the `twat` directory somewhere inside your Python path (like in your Django project folder).
-2. Add `twat.context_processors.twitter_settings` to your `settings.TEMPLATE_CONTEXT_PROCESSORS`.
+2. Add `twat.context_processors.twitter` to your `settings.TEMPLATE_CONTEXT_PROCESSORS`.
 
   A good way to do this with overriding all of Django's default context processors is to first import the variable from the global settings and then append to it:
 
         from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
 
         TEMPLATE_CONTEXT_PROCESSORS += (
-            'twat.context_processors.twitter_settings',
+            'twat.context_processors.twitter',
         )
 
 
