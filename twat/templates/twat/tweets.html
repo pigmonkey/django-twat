@@ -1,5 +1,5 @@
 {% if tweets %}
-<ol id="twitter">
+<ol id="twitter-timeline">
     {% for tweet in tweets %}
     <li id="tweet-{{ tweet.id }}" class="tweet">{{ tweet.text|safe }} <a href="{{ tweet.permalink }}" title="view this tweet on Twitter" rel="nofollow">posted {{ tweet.created_at|timesince }} ago</a></li>
     {% endfor %}
