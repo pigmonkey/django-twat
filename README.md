@@ -10,6 +10,7 @@ Requirements
 ------------
 
 * [pytz](http://pytz.sourceforge.net/) is used to convert the tweets' timestamps from UTC to the user's timezone.
+* [simplejson](https://github.com/simplejson/simplejson) is used to read the JSON file returned by the Twitter API.
 
 
 Installation
