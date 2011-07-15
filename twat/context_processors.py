@@ -26,7 +26,7 @@ def twitter(request):
     try:
         page = urlopen(url)
     except:
-        pass
+        timeline = None
     else:
         timeline = simplejson.loads(page.read())
 
