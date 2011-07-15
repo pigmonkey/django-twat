@@ -18,41 +18,47 @@ def twitter(request):
     if tweets:
         return {'tweets': tweets}
 
-    # Pull the tweets from the Twitter API in JSON format.
+    # Build the URL
     url = 'http://api.twitter.com/1/statuses/user_timeline/%s.json?count=%i' %\
           (twat_settings.TWITTER_USER, twat_settings.TWITTER_NUMTWEETS)
-    page = urlopen(url)
-    timeline = simplejson.loads(page.read())
 
-    for tweet in timeline:
-        # Convert the tweet's created time to a datetime object.
-        tweet['created_at'] = datetime.strptime(tweet['created_at'],
-                                                "%a %b %d %H:%M:%S +0000 %Y")
+    # Attempt to pull the tweets from the Twitter API in JSON format.
+    try:
+        page = urlopen(url)
+    except:
+        pass
+    else:
+        timeline = simplejson.loads(page.read())
 
-        # Convert the datetime from a naive object to an aware one.
-        tweet['created_at'] = tweet['created_at'].replace(tzinfo=timezone('UTC'))
+        for tweet in timeline:
+            # Convert the tweet's created time to a datetime object.
+            tweet['created_at'] = datetime.strptime(tweet['created_at'],
+                                                    "%a %b %d %H:%M:%S +0000 %Y")
 
-        # Convert the datetime object's timezone to local time.
-        tweet['created_at'] = tweet['created_at'].astimezone(timezone(settings.TIME_ZONE))
+            # Convert the datetime from a naive object to an aware one.
+            tweet['created_at'] = tweet['created_at'].replace(tzinfo=timezone('UTC'))
 
-        # Build a permlink for the tweet.
-        tweet['permalink'] = 'https://twitter.com/%s/status/%s' %\
-                              (twat_settings.TWITTER_USER, tweet['id'])
+            # Convert the datetime object's timezone to local time.
+            tweet['created_at'] = tweet['created_at'].astimezone(timezone(settings.TIME_ZONE))
 
-        # Turn any URLs in the tweets into links. This must be done before
-        # linking Twitter usernames, as urlize() expects a string without any
-        # HTML markup.
-        tweet['text'] = urlize(tweet['text'], nofollow=True)
+            # Build a permlink for the tweet.
+            tweet['permalink'] = 'https://twitter.com/%s/status/%s' %\
+                                  (twat_settings.TWITTER_USER, tweet['id'])
 
-        # Find any usernames and make them links.
-        twitter_username_re = re.compile(r'@([A-Za-z0-9_]+)')
-        tweet['text'] = twitter_username_re.sub(
-                                    lambda m:
-                                    '<a href="http://twitter.com/%s">%s</a>' %\
-                                    (m.group(1), m.group(0)), tweet['text'])
+            # Turn any URLs in the tweets into links. This must be done before
+            # linking Twitter usernames, as urlize() expects a string without any
+            # HTML markup.
+            tweet['text'] = urlize(tweet['text'], nofollow=True)
 
-    # Add the tweets to the cache
-    cache.set('tweets', timeline, twat_settings.TWITTER_TIMEOUT)
+            # Find any usernames and make them links.
+            twitter_username_re = re.compile(r'@([A-Za-z0-9_]+)')
+            tweet['text'] = twitter_username_re.sub(
+                                        lambda m:
+                                        '<a href="http://twitter.com/%s">%s</a>' %\
+                                        (m.group(1), m.group(0)), tweet['text'])
+
+        # Add the tweets to the cache
+        cache.set('tweets', timeline, twat_settings.TWITTER_TIMEOUT)
 
     # Return the tweets
-    return{'tweets': timeline}
+    return {'tweets': timeline}
