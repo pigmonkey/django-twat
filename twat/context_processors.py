@@ -25,11 +25,10 @@ def twitter(request):
     # Attempt to pull the tweets from the Twitter API in JSON format.
     try:
         page = urlopen(url)
+        timeline = simplejson.loads(page.read())
     except:
         timeline = None
     else:
-        timeline = simplejson.loads(page.read())
-
         for tweet in timeline:
             # Convert the tweet's created time to a datetime object.
             tweet['created_at'] = datetime.strptime(tweet['created_at'],
